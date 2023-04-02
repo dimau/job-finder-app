@@ -1,0 +1,46 @@
+services:
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: rabbitmq
+    ports:
+      - 15672:15672
+      - 5672:5672
+    networks: 
+      - dev-network
+    environment:
+      - RABBITMQ_DEFAULT_USER_FILE=/run/secrets/rabbitmq_user
+      - RABBITMQ_DEFAULT_PASS_FILE=/run/secrets/rabbitmq_pass
+      - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit log_levels [{connection,error},{default,error}] disk_free_limit 2147483648
+    volumes:
+      - ./rabbitmq:/var/lib/rabbitmq
+    restart: always
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    secrets:
+      - rabbitmq_user
+      - rabbitmq_pass
+
+  job-collector-go:
+    image: job-collector-go
+    networks:
+      - dev-network
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    secrets:
+      - hh_api_token
+
+networks:
+  dev-network:
+
+secrets:
+  rabbitmq_user:
+    file: ./secrets/rabbitmq_user.txt
+  rabbitmq_pass:
+    file: ./secrets/rabbitmq_password.txt
+  hh_api_token:
+    file: ./secrets/hh_api_token.txt
