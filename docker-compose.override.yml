@@ -1,0 +1,5 @@
+services:
+
+  job-collector-go:
+    build:
+      context: ../job-collector-go

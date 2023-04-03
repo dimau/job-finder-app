@@ -4,10 +4,11 @@ services:
     image: rabbitmq:3-management
     hostname: rabbitmq
     ports:
-      - 15672:15672
-      - 5672:5672
+      - 15800:15672
+#    expose:
+#      - 5672
     networks: 
-      - dev-network
+      - main-network
     environment:
       - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit log_levels [{connection,error},{default,error}] disk_free_limit 2147483648
     volumes:
@@ -24,7 +25,7 @@ services:
   job-collector-go:
     image: job-collector-go
     networks:
-      - dev-network
+      - main-network
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -34,7 +35,7 @@ services:
       - rabbitmq_pass
 
 networks:
-  dev-network:
+  main-network:
 
 secrets:
   rabbitmq_user:

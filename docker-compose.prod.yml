@@ -1,0 +1,4 @@
+services:
+
+  job-collector-go:
+    build: https://github.com/dimau/job-collector-go.git
