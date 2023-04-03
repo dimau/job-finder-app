@@ -22,8 +22,8 @@ services:
       timeout: 30s
       retries: 3
 
-  job-collector-go:
-    image: job-collector-go
+  hh-collector:
+    image: hh-collector
     networks:
       - main-network
     depends_on:

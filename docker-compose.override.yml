@@ -1,5 +1,5 @@
 services:
 
-  job-collector-go:
+  hh-collector:
     build:
-      context: ../job-collector-go
+      context: ../hh-collector
