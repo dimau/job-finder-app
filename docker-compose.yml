@@ -26,6 +26,9 @@ services:
     image: hh-collector
     networks:
       - main-network
+    environment:
+      - RABBIT_MQ_SERVER_NAME=rabbitmq
+      - RABBIT_MQ_PORT=5672
     depends_on:
       rabbitmq:
         condition: service_healthy
