@@ -8,6 +8,7 @@ git clone git@github.com:dimau/hh-collector.git
 git clone git@github.com:dimau/telegram-collector.git
 git clone git@github.com:dimau/hh-api-client-go.git
 cd job-finder-app
+docker compose build
 docker compose up -d
 ```
 
@@ -15,5 +16,6 @@ docker compose up -d
 ```
 git clone git@github.com:dimau/job-finder-app.git
 cd job-finder-app
+docker compose build
 docker compose up -f docker-compose.yml -f docker-compose.prod.yml -d
 ```

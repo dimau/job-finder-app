@@ -22,6 +22,47 @@ services:
       timeout: 30s
       retries: 3
 
+  postgres:
+    image: postgres:15.2
+    environment:
+      - POSTGRES_USER_FILE=/run/secrets/postgres_user
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_passwd
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    restart: always
+    networks:
+      - main-network
+    volumes:
+#      - .:/docker-entrypoint-initdb.d
+      - .:/var/lib/postgresql/data
+#      - ./postgresql.conf:/var/lib/postgresql/data/postgresql.conf
+#    healthcheck:
+#      test: [ "CMD-SHELL", "pg_isready -U user_name -d db_name" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#      start_period: 10s
+    secrets:
+      - postgres_user
+      - postgres_passwd
+
+  pgadmin:
+    image: dpage/pgadmin4:6.21
+    container_name: pgadmin_container
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=dimau777@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD_FILE=/run/secrets/pgadmin_passwd
+    volumes:
+      - ./pgadmin:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    restart: unless-stopped
+    networks:
+      - main-network
+    secrets:
+      - pgadmin_passwd
+
   hh-collector:
     image: hh-collector
     networks:
@@ -35,7 +76,7 @@ services:
     secrets:
       - hh_api_token
       - rabbitmq_user
-      - rabbitmq_pass
+      - rabbitmq_passwd
 
 networks:
   main-network:
@@ -43,7 +84,13 @@ networks:
 secrets:
   rabbitmq_user:
     file: ./secrets/rabbitmq_user.txt
-  rabbitmq_pass:
+  rabbitmq_passwd:
     file: ./secrets/rabbitmq_password.txt
+  postgres_user:
+    file: ./secrets/postgres_user.txt
+  postgres_passwd:
+    file: ./secrets/postgres_passwd.txt
+  pgadmin_passwd:
+    file: ./secrets/pgadmin_passwd.txt
   hh_api_token:
     file: ./secrets/hh_api_token.txt
