@@ -1,4 +1,4 @@
 secrets
 rabbitmq
-pgdata
+postgres
 pgadmin

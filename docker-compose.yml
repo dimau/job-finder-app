@@ -27,22 +27,21 @@ services:
     environment:
       - POSTGRES_USER_FILE=/run/secrets/postgres_user
       - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_passwd
-      - PGDATA=/var/lib/postgresql/data/pgdata
     ports:
       - "5432:5432"
     restart: always
     networks:
       - main-network
     volumes:
-#      - .:/docker-entrypoint-initdb.d
-      - .:/var/lib/postgresql/data
+      - ./postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./postgres/data:/var/lib/postgresql/data
 #      - ./postgresql.conf:/var/lib/postgresql/data/postgresql.conf
-#    healthcheck:
-#      test: [ "CMD-SHELL", "pg_isready -U user_name -d db_name" ]
-#      interval: 10s
-#      timeout: 5s
-#      retries: 5
-#      start_period: 10s
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U user_checker -d JobFinderApp" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     secrets:
       - postgres_user
       - postgres_passwd
@@ -70,13 +69,20 @@ services:
     environment:
       - RABBIT_MQ_SERVER_NAME=rabbitmq
       - RABBIT_MQ_PORT=5672
+      - POSTGRES_SERVER_NAME=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=JobFinderApp
     depends_on:
       rabbitmq:
+        condition: service_healthy
+      postgres:
         condition: service_healthy
     secrets:
       - hh_api_token
       - rabbitmq_user
       - rabbitmq_passwd
+      - postgres_user
+      - postgres_passwd
 
 networks:
   main-network:
