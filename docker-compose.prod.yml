@@ -2,3 +2,23 @@ services:
 
   hh-collector:
     build: git@github.com:dimau/hh-collector.git
+    image: hh-collector
+    networks:
+      - main-network
+    environment:
+      - RABBIT_MQ_SERVER_NAME=rabbitmq
+      - RABBIT_MQ_PORT=5672
+      - POSTGRES_SERVER_NAME=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=JobFinderApp
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    secrets:
+      - hh_api_token
+      - rabbitmq_user
+      - rabbitmq_passwd
+      - postgres_user
+      - postgres_passwd

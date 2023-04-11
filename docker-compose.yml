@@ -5,9 +5,7 @@ services:
     hostname: rabbitmq
     ports:
       - 15800:15672
-#    expose:
-#      - 5672
-    networks: 
+    networks:
       - main-network
     environment:
       - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit log_levels [{connection,error},{default,error}] disk_free_limit 2147483648
@@ -27,8 +25,6 @@ services:
     environment:
       - POSTGRES_USER_FILE=/run/secrets/postgres_user
       - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_passwd
-    ports:
-      - "5432:5432"
     restart: always
     networks:
       - main-network
@@ -55,37 +51,16 @@ services:
     volumes:
       - ./pgadmin:/var/lib/pgadmin
     ports:
-      - "5050:80"
+      - 5050:80
     restart: unless-stopped
     networks:
       - main-network
     secrets:
       - pgadmin_passwd
 
-  hh-collector:
-    image: hh-collector
-    networks:
-      - main-network
-    environment:
-      - RABBIT_MQ_SERVER_NAME=rabbitmq
-      - RABBIT_MQ_PORT=5672
-      - POSTGRES_SERVER_NAME=postgres
-      - POSTGRES_PORT=5432
-      - POSTGRES_DB=JobFinderApp
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-    secrets:
-      - hh_api_token
-      - rabbitmq_user
-      - rabbitmq_passwd
-      - postgres_user
-      - postgres_passwd
-
 networks:
   main-network:
+    name: main-network
 
 secrets:
   rabbitmq_user:

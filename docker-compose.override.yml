@@ -1,5 +1,10 @@
 services:
 
-  hh-collector:
-    build:
-      context: ../hh-collector
+  rabbitmq:
+    ports:
+      - 15800:15672
+      - 5672:5672
+
+  postgres:
+    ports:
+      - 5432:5432
