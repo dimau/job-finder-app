@@ -1,0 +1,33 @@
+services:
+
+  hh-handler:
+    build:
+      context: ../hh-handler
+    image: hh-handler
+    networks:
+      - main-network
+    environment:
+      - RABBIT_MQ_SERVER_NAME=rabbitmq
+      - RABBIT_MQ_PORT=5672
+      - POSTGRES_SERVER_NAME=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=JobFinderApp
+    secrets:
+      - rabbitmq_user
+      - rabbitmq_passwd
+      - postgres_user
+      - postgres_passwd
+
+networks:
+  main-network:
+    external: true
+
+secrets:
+  rabbitmq_user:
+    file: ./secrets/rabbitmq_user.txt
+  rabbitmq_passwd:
+    file: ./secrets/rabbitmq_password.txt
+  postgres_user:
+    file: ./secrets/postgres_user.txt
+  postgres_passwd:
+    file: ./secrets/postgres_passwd.txt
